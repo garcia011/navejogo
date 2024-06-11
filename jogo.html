@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exercício de Movimentação da Nave</title>
+  <style>
+    canvas {
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+  <script>
+    var canvas = document.getElementById("gameCanvas");
+    var ctx = canvas.getContext("2d");
+
+    var nave = {
+      x: canvas.width / 2,
+      y: canvas.height - 30,
+      width: 50,
+      height: 50,
+      speed: 5
+    };
+
+    var tiro = {
+      x: nave.x + nave.width / 2,
+      y: nave.y,
+      radius: 5,
+      speed: 10,
+      shooting: false
+    };
+
+    
+    var naveImg = new Image();
+    naveImg.src = 'nave.png'; /
+
+    
+    function drawNave() {
+      ctx.drawImage(naveImg, nave.x, nave.y, nave.width, nave.height);
+    }
+
+    function drawTiro() {
+      ctx.beginPath();
+      ctx.arc(tiro.x, tiro.y, tiro.radius, 0, Math.PI * 2);
+      ctx.fillStyle = "#FF0000";
+      ctx.fill();
+      ctx.closePath();
+    }
+
+    function update() {
+      if (tiro.shooting) {
+        tiro.y -= tiro.speed;
+        if (tiro.y < 0) {
+          tiro.shooting = false;
+        }
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawNave();
+      if (tiro.shooting) {
+        drawTiro();
+      }
+    }
+
+    function main() {
+      update();
+      draw();
+      requestAnimationFrame(main);
+    }
+
+    document.addEventListener("keydown", function(event) {
+      if (event.key === "a" || event.key === "A") {
+        nave.x -= nave.speed;
+      } else if (event.key === "d" || event.key === "D") {
+        nave.x += nave.speed;
+      } else if (event.key === "ArrowUp") {
+        if (!tiro.shooting) {
+          tiro.x = nave.x + nave.width / 2;
+          tiro.y = nave.y;
+          tiro.shooting = true;
+        }
+      }
+    });
+
+    
+    naveImg.onload = function() {
+      main();
+    };
+  </script>
+</body>
